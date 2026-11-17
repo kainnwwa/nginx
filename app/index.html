@@ -1,0 +1,73 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="UTF-8">
+    <title>DRF API Notes</title>
+</head>
+<body>
+    <h1>DRF API Notes</h1>
+    
+    <h3>Создать заметку (POST)</h3>
+    <input type="text" id="title" placeholder="Заголовок"><br>
+    <textarea id="content" placeholder="Текст"></textarea><br>
+    <button onclick="createArticle()">Создать</button>
+    
+    <h3>Список заметок (GET)</h3>
+    <button onclick="loadArticles()">Обновить</button>
+    <div id="articles"></div>
+
+    <script>
+        let csrfToken = '';
+
+        function getCookie(name) {
+            const value = `; ${document.cookie}`;
+            const parts = value.split(`; ${name}=`);
+            if (parts.length === 2) return parts.pop().split(';').shift();
+        }
+
+        async function getCsrfToken() {
+            await fetch(API_URL, { credentials: 'same-origin' });
+            csrfToken = getCookie('csrftoken');
+        }
+
+        async function loadArticles() {
+            const response = await fetch(API_URL, { credentials: 'same-origin' });
+            const data = await response.json();
+            const container = document.getElementById('articles');
+            container.innerHTML = data.map(a => 
+                `<div><b>${a.title}</b><br>${a.content}<br><small>${a.created_at}</small><hr></div>`
+            ).join('') || 'Пусто';
+        }
+
+        async function createArticle() {
+            const title = document.getElementById('title').value;
+            const content = document.getElementById('content').value;
+
+            if (!csrfToken) await getCsrfToken();
+
+            const response = await fetch(API_URL, {
+                method: 'POST',
+                credentials: 'same-origin',
+                headers: {
+                    'Content-Type': 'application/json',
+                    'X-CSRFToken': csrfToken
+                },
+                body: JSON.stringify({ title, content })
+            });
+
+            if (response.ok) {
+                document.getElementById('title').value = '';
+                document.getElementById('content').value = '';
+                loadArticles();
+            } else {
+                alert('Ошибка: ' + await response.text());
+            }
+        }
+
+        window.onload = async () => {
+            await getCsrfToken();
+            loadArticles();
+        };
+    </script>
+</body>
+</html>
