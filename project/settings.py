@@ -1,7 +1,3 @@
-"""
-Django settings for project project.
-"""
-
 import os
 from pathlib import Path
 
@@ -20,14 +16,14 @@ INSTALLED_APPS = [
     'django.contrib.sessions',
     'django.contrib.messages',
     'django.contrib.staticfiles',
-    'rest_framework',
     'corsheaders',
+    'rest_framework',
     'app',
 ]
 
 MIDDLEWARE = [
-    'django.middleware.security.SecurityMiddleware',
     'corsheaders.middleware.CorsMiddleware',
+    'django.middleware.security.SecurityMiddleware',
     'django.contrib.sessions.middleware.SessionMiddleware',
     'django.middleware.common.CommonMiddleware',
     'django.middleware.csrf.CsrfViewMiddleware',
@@ -80,7 +76,6 @@ STATIC_ROOT = BASE_DIR / 'staticfiles'
 
 DEFAULT_AUTO_FIELD = 'django.db.models.BigAutoField'
 
-
 REST_FRAMEWORK = {
     'DEFAULT_AUTHENTICATION_CLASSES': [
         'rest_framework.authentication.SessionAuthentication',
@@ -88,12 +83,21 @@ REST_FRAMEWORK = {
     'DEFAULT_PERMISSION_CLASSES': [
         'rest_framework.permissions.AllowAny',
     ],
+    'DEFAULT_RENDERER_CLASSES': [
+        'rest_framework.renderers.JSONRenderer',
+        'rest_framework.renderers.BrowsableAPIRenderer',
+    ]
 }
 
 CORS_ALLOWED_ORIGINS = [
+    'http://localhost:5500',
+    'http://127.0.0.1:5500',
     'http://localhost:8000',
     'http://127.0.0.1:8000',
+    'http://192.168.170.40:8001',
     'http://192.168.170.40:1112',
+    'http://192.168.170.40:8090',
+    'https://192.168.170.40:8001',
 ]
 
 CORS_ALLOW_CREDENTIALS = True
@@ -119,21 +123,24 @@ CORS_ALLOW_HEADERS = [
     'x-requested-with',
 ]
 
-
 CSRF_TRUSTED_ORIGINS = [
+    'https://192.168.170.40:8001',
+    'http://192.168.170.40:8001',
+    'http://localhost:5500',
+    'http://127.0.0.1:5500',
     'http://localhost:8000',
     'http://127.0.0.1:8000',
     'http://192.168.170.40:1112',
+    'http://192.168.170.40:8090',
 ]
 
-CSRF_COOKIE_SAMESITE = 'None'
+CSRF_COOKIE_SAMESITE = 'Lax'
 CSRF_COOKIE_SECURE = False
 CSRF_COOKIE_HTTPONLY = False
 CSRF_COOKIE_NAME = 'csrftoken'
 
-SESSION_COOKIE_SAMESITE = 'None'
+SESSION_COOKIE_SAMESITE = 'Lax'
 SESSION_COOKIE_SECURE = False
-
 
 SECURE_CROSS_ORIGIN_OPENER_POLICY = 'same-origin-allow-popups'
 SECURE_CONTENT_TYPE_NOSNIFF = True
